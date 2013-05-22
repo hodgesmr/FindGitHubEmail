@@ -11,7 +11,7 @@ Run this:
 
 ```sh
 git clone https://github.com/hodgesmr/FindGitHubEmail.git ~/FindGitHubEmail
-bash ~/FindGitHubEmail/script/findGitHubEmail hodgesmr
+bash ~/FindGitHubEmail/findGitHubEmail hodgesmr
 ```
 
 If you're not looking for me, replace `hodgesmr` with another GitHub username.
