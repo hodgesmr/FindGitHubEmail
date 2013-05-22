@@ -1,4 +1,2 @@
 #!/usr/bin/env bash
-
-arr=(`curl -s https://api.github.com/users/$1/events/public | grep email | sed -e 's/\"email\"://g' | sed -e 's/\"//g' | sed -e 's/,//g' | sed -e 's/ //g'`)
-echo ${arr[0]} 
+curl -s https://api.github.com/users/$1/events/public | grep email | sed -e 's/\"email\"://g' | sed -e 's/\"//g' | sed -e 's/,//g' | sed -e 's/ //g' | sort | uniq -c | sort -n | tail -n1 | awk '{ print $2 }'
