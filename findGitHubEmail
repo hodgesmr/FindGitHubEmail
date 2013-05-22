@@ -1,2 +1,2 @@
 #!/usr/bin/env bash
-curl -s https://api.github.com/users/$1/events/public | grep "email\"\(.*\)[[:alnum:]._%+-]\+@" | sed -e 's/[,|"]//g' | uniq -c | sort -n | tail -n1 | awk '{print $(NF)}'
+curl -s https://api.github.com/users/$1/events/public | grep "email\"\(.*\)[[:alnum:]._+-]\+@" | uniq -c | awk '{print $(NF)}' | sed -e 's/[,|"]//g' | sort -n | tail -n1
