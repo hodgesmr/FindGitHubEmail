@@ -1,2 +1,2 @@
 #!/usr/bin/env bash
-curl -s https://api.github.com/users/$1/events/public | grep "email\"" | uniq -c | sed -e 's/[,|"]//g' | sort -n | awk '{print $(NF)}' | tail -n1
+curl -s https://api.github.com/users/$1/events/public | grep "\"email\"" | uniq -c | sed -e 's/[,|"]//g' | sort -n | awk '{print $(NF)}' | tail -n1
