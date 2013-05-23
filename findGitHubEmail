@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
 
-usage="$(basename "$0") [-a] user -- Find the email address of any GitHub user
+usage="$(basename "$0") [-a] [-g] user -- Find the email address of any GitHub user
 
 where:
-    -a display all possible email adddresses"
+    -a display all possible email adddresses
+    -g compare with the Gravatar ID to find the right email address"
 
 if [ "$1" == "-h" ] || [ "$1" == "--help" ] || [ "$1" == "" ] || [ "$1" == "-a" ] && [ "$2" == "" ]; then
   echo "$usage"
@@ -13,6 +14,19 @@ fi
 if [ "$1" == "-a" ] ; then
   USER=$2
   FILTER='cat -'
+elif [ "$1" == "-g" ] ; then
+  if [ -z "$2" ] ; then
+    echo "$usage"
+    exit
+  fi
+  gid=`curl -s https://api.github.com/users/$2/events/public | grep "\"gravatar_id\":" | sed -e's/[,|"]//g' | head -n 1 | awk '{print $(NF)}'`
+  emails=`curl -s https://api.github.com/users/$2/events/public | grep "\"email\":" | sed -e's/[,|"]//g' | sort | uniq -c | sort -n | awk '{print $(NF)}' | grep -v null`
+  for email in $emails ; do
+    if [ $gid == `md5 -q -s $email` ] ; then
+      echo $email
+      break
+    fi
+  done
 else
   USER=$1
   FILTER='tail -n1'
