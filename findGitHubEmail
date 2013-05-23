@@ -5,17 +5,17 @@ usage="$(basename "$0") [-a] user -- Find the email address of any GitHub user
 where:
     -a display all possible email adddresses"
 
-if [ "$1" == "-h" ] || [ "$1" == "--help" ] || [ "$1" == "" ] ; then
+if [ "$1" == "-h" ] || [ "$1" == "--help" ] || [ "$1" == "" ] || [ "$1" == "-a" ] && [ "$2" == "" ]; then
   echo "$usage"
   exit
 fi
 
 if [ "$1" == "-a" ] ; then
-  if [ -z "$2" ] ; then
-    echo "$usage"
-    exit
-  fi
-  curl -s https://api.github.com/users/$2/events/public | grep "\"email\":" | sed -e's/[,|"]//g' | sort | uniq -c | sort -n | awk '{print $(NF)}' | grep -v null
+  USER=$2
+  FILTER='cat -'
 else
-  curl -s https://api.github.com/users/$1/events/public | grep "\"email\":" | sed -e's/[,|"]//g' | sort | uniq -c | sort -n | awk '{print $(NF)}' | grep -v null | tail -n1
+  USER=$1
+  FILTER='tail -n1'
 fi
+
+curl -s https://api.github.com/users/$USER/events/public | grep "\"email\":" | sed -e's/[,|"]//g' | sort | uniq -c | sort -n | awk '{print $(NF)}' | grep -v null | $FILTER
