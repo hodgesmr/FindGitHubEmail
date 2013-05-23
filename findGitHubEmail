@@ -15,7 +15,7 @@ if [ "$1" == "-a" ] ; then
     echo "$usage"
     exit
   fi
-  curl -s https://api.github.com/users/hodgesmr/events/public | grep "\"email\":" | sed -e's/[,|"]//g' | sort | uniq -c | sort -n | awk '{print $(NF)}'
+  curl -s https://api.github.com/users/$2/events/public | grep "\"email\":" | sed -e's/[,|"]//g' | sort | uniq -c | sort -n | awk '{print $(NF)}'
 else
-  curl -s https://api.github.com/users/hodgesmr/events/public | grep "\"email\":" | sed -e's/[,|"]//g' | sort | uniq -c | sort -n | awk '{print $(NF)}' | tail -n1
+  curl -s https://api.github.com/users/$1/events/public | grep "\"email\":" | sed -e's/[,|"]//g' | sort | uniq -c | sort -n | awk '{print $(NF)}' | tail -n1
 fi
