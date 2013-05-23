@@ -18,7 +18,7 @@ If you're not looking for me, replace `hodgesmr` with another GitHub user.
 
 The above will return the best guess of the email based on the user's event log.
 
-You can also see all possibilities: `findGitHubEmail -a hodgesmr`
+Print all emails in the user's event log: `findGitHubEmail -e hodgesmr`
 
 Or cross-check the discovered emails with the user's Gravatar ID: `findGitHubEmail -g hodgesmr`
 
