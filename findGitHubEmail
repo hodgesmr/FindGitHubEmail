@@ -1,28 +1,29 @@
 #!/usr/bin/env bash
 
-USAGE="$(basename "$0") [-a] [-g] user -- Find the email address of any GitHub user
+USAGE="$(basename "$0") [-e] [-g] user -- Find the email address of any GitHub user
 
-where:
-    -a display all possible email adddresses
-    -g only display matches that relate to a user's Gravatar ID"
+Where:
+    -e Event log: show all emails that appear in the user's event log
+    -g Gravatar match: attempt to match an event email to the user's Gravatar ID"
 
 if [ "$1" == "-h" ] || [ "$1" == "--help" ] || [ -z "$1" ] ; then
   echo "$USAGE"
   exit
 fi
 
-if [ "$1" == "-a" ] || [ "$1" == "-g" ] ; then
+if [ "$1" == "-e" ] || [ "$1" == "-g" ] ; then
   if [ -z "$2" ] ; then
     echo "$USAGE"
     exit
   fi
 
   USER=$2
-  RESPONSE=`curl -s https://api.github.com/users/$2/events/public`
-  EMAILS=`echo "$RESPONSE" | grep "\"email\":" | sed -e's/[,|"]//g' | sort | uniq -c | sort -n | awk '{print $(NF)}' | grep -v null`
+  EVENTRESPONSE=`curl -s https://api.github.com/users/$USER/events/public`
+  EMAILS=`echo "$EVENTRESPONSE" | grep "\"email\":" | sed -e's/[,|"]//g' | sort | uniq -c | sort -n | awk '{print $(NF)}' | grep -v null`
   
   if [ "$1" == "-g" ] ; then
-    GID=`echo "$RESPONSE" | grep "\"gravatar_id\":" | sed -e's/[,|"]//g' | head -n 1 | awk '{print $(NF)}'`
+    PROFILERESPONSE=`curl -s https://api.github.com/users/$USER`
+    GID=`echo "$PROFILERESPONSE" | grep "\"gravatar_id\":" | sed -e's/[,|"]//g' | awk '{print $(NF)}'`
     for EMAIL in $EMAILS ; do
       if [ $GID == `md5 -q -s $EMAIL` ] ; then
         echo "$EMAIL"
@@ -35,12 +36,14 @@ if [ "$1" == "-a" ] || [ "$1" == "-g" ] ; then
 fi
 
 USER=$1
-FILTER='tail -n1'
-RESPONSE=`curl -s https://api.github.com/users/$USER`
-EMAIL=`echo "$RESPONSE" | grep "\"email\":" | sed -e's/[,|"]//g' | awk '{print $(NF)}' | grep -v null`
+PROFILERESPONSE=`curl -s https://api.github.com/users/$USER`
+EMAIL=`echo "$PROFILERESPONSE" | grep "\"email\":" | sed -e's/[,|"]//g' | awk '{print $(NF)}' | grep -v null`
 
 if [ -z "$EMAIL" ] ; then
-  EMAIL=`curl -s https://api.github.com/users/$USER/events/public | grep "\"email\":" | sed -e's/[,|"]//g' | sort | uniq -c | sort -n | awk '{print $(NF)}' | grep -v null | tail -n1`
+  EVENTRESPONSE=`curl -s https://api.github.com/users/$USER/events/public`
+  EMAIL=`echo "$EVENTRESPONSE" | grep "\"email\":" | sed -e's/[,|"]//g' | sort | uniq -c | sort -n | awk '{print $(NF)}' | grep -v null | tail -n1`
 fi
 
-echo "$EMAIL"
+if [ -n "$EMAIL" ] ; then
+  echo "$EMAIL"
+fi
