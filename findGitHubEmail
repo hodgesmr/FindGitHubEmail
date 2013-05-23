@@ -52,7 +52,9 @@ if [ "$1" == "-e" ] || [ "$1" == "-g" ] ; then
       fi
     done
   else
-    echo "$EMAILS"
+    if [ -n "$EMAILS" ] ; then
+      echo "$EMAILS"
+    fi
   fi
   exit
 fi
