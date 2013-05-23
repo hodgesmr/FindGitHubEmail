@@ -1,2 +1,21 @@
 #!/usr/bin/env bash
-curl -s https://api.github.com/users/$1/events/public | grep "\"email\"" | uniq -c | sort -n | awk '{print $(NF)}' | tail -n1 | sed -e 's/[,|"]//g'
+
+usage="$(basename "$0") [-a] user -- Find the email address of any GitHub user
+
+where:
+    -a display all possible email adddresses"
+
+if [ "$1" == "-h" ] || [ "$1" == "--help" ] || [ "$1" == "" ] ; then
+  echo "$usage"
+  exit
+fi
+
+if [ "$1" == "-a" ] ; then
+  if [ -z "$2" ] ; then
+    echo "$usage"
+    exit
+  fi
+  curl -s https://api.github.com/users/hodgesmr/events/public | grep "\"email\":" | sed -e's/[,|"]//g' | sort | uniq -c | sort -n | awk '{print $(NF)}'
+else
+  curl -s https://api.github.com/users/hodgesmr/events/public | grep "\"email\":" | sed -e's/[,|"]//g' | sort | uniq -c | sort -n | awk '{print $(NF)}' | tail -n1
+fi
