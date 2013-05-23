@@ -6,7 +6,7 @@ where:
     -a display all possible email adddresses
     -g only display matches that relate to a user's  Gravatar ID"
 
-if [ "$1" == "-h" ] || [ "$1" == "--help" ] || [ "$1" == "" ] || [ "$1" == "-a" ] && [ "$2" == "" ] || [ "$1" == "-g" ] && [ "$2" == "" ]; then
+if [ "$1" == "-h" ] || [ "$1" == "--help" ] || [ -z "$1" ] || [ "$1" == "-a" ] && [ -z "$2" ] || [ "$1" == "-g" ] && [ -z "$2" ] ; then
   echo "$usage"
   exit
 fi
@@ -28,4 +28,12 @@ else
   FILTER='tail -n1'
 fi
 
-curl -s https://api.github.com/users/$USER/events/public | grep "\"email\":" | sed -e's/[,|"]//g' | sort | uniq -c | sort -n | awk '{print $(NF)}' | grep -v null | $FILTER
+userEmail=`curl -s https://api.github.com/users/$USER | grep "\"email\":" | sed -e's/[,|"]//g' | awk '{print $(NF)}' | grep -v null`
+
+if [ -z "$userEmail" ] ; then
+  userEmail=`curl -s https://api.github.com/users/$USER/events/public | grep "\"email\":" | sed -e's/[,|"]//g' | sort | uniq -c | sort -n | awk '{print $(NF)}' | grep -v null | $FILTER`
+fi
+
+if [ -n "$userEmail" ] ; then
+  echo "$userEmail"
+fi
