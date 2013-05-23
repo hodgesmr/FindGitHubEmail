@@ -4,7 +4,7 @@ usage="$(basename "$0") [-a] [-g] user -- Find the email address of any GitHub u
 
 where:
     -a display all possible email adddresses
-    -g compare with the Gravatar ID to find the right email address"
+    -g only display matches that relate to a user's  Gravatar ID"
 
 if [ "$1" == "-h" ] || [ "$1" == "--help" ] || [ "$1" == "" ] || [ "$1" == "-a" ] && [ "$2" == "" ]; then
   echo "$usage"
