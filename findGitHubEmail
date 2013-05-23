@@ -6,27 +6,23 @@ where:
     -a display all possible email adddresses
     -g only display matches that relate to a user's  Gravatar ID"
 
-if [ "$1" == "-h" ] || [ "$1" == "--help" ] || [ "$1" == "" ] || [ "$1" == "-a" ] && [ "$2" == "" ]; then
+if [ "$1" == "-h" ] || [ "$1" == "--help" ] || [ "$1" == "" ] || [ "$1" == "-a" ] && [ "$2" == "" ] || [ "$1" == "-g" ] && [ "$2" == "" ]; then
   echo "$usage"
   exit
 fi
 
-if [ "$1" == "-a" ] ; then
-  USER=$2
-  FILTER='cat -'
-elif [ "$1" == "-g" ] ; then
-  if [ -z "$2" ] ; then
-    echo "$usage"
-    exit
-  fi
+if [ "$1" == "-g" ] ; then
   gid=`curl -s https://api.github.com/users/$2/events/public | grep "\"gravatar_id\":" | sed -e's/[,|"]//g' | head -n 1 | awk '{print $(NF)}'`
   emails=`curl -s https://api.github.com/users/$2/events/public | grep "\"email\":" | sed -e's/[,|"]//g' | sort | uniq -c | sort -n | awk '{print $(NF)}' | grep -v null`
   for email in $emails ; do
     if [ $gid == `md5 -q -s $email` ] ; then
       echo $email
-      break
+      exit
     fi
   done
+elif [ "$1" == "-a" ] ; then
+  USER=$2
+  FILTER='cat -'
 else
   USER=$1
   FILTER='tail -n1'
