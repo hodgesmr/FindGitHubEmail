@@ -16,6 +16,13 @@ bash ~/FindGitHubEmail/findGitHubEmail hodgesmr
 
 If you're not looking for me, replace `hodgesmr` with another GitHub user.
 
+The above will return the most common email address found in a given user's event log. You can also see all email addresses in the event log:
+
+```sh
+git clone https://github.com/hodgesmr/FindGitHubEmail.git ~/FindGitHubEmail
+bash ~/FindGitHubEmail/findGitHubEmail -a hodgesmr
+```
+
 ## A Matt Hodges project
 
 This project is maintained by [@hodgesmr](http://twitter.com/hodgesmr).
