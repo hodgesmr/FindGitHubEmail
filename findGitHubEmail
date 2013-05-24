@@ -25,6 +25,7 @@
 USAGE="$(basename "$0") [-e] [-g] user -- Find the email address of any GitHub user
 
 Where:
+    -h, --help Help: display this help message
     -e Event log: show all emails that appear in the user's event log
     -g Gravatar match: attempt to match an event email to the user's Gravatar ID"
 
