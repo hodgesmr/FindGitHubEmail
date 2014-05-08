@@ -22,6 +22,15 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
+function _md5()
+{
+  if which md5sum > /dev/null; then
+    echo -n $1 | md5sum | cut -d " " -f1
+  else
+    md5 -q -s $1
+  fi
+}
+
 USAGE="$(basename "$0") [-e] [-g] user -- Find the email address of any GitHub user
 
 Where:
@@ -48,7 +57,7 @@ if [ "$1" == "-e" ] || [ "$1" == "-g" ] ; then
     PROFILERESPONSE=`curl -s https://api.github.com/users/$USER`
     GID=`echo "$PROFILERESPONSE" | grep "\"gravatar_id\":" | sed -e's/[,|"]//g' | awk '{print $(NF)}'`
     for EMAIL in $EMAILS ; do
-      if [ $GID == `md5 -q -s $EMAIL` ] ; then
+      if [ $GID == `_md5 $EMAIL` ] ; then
         echo "$EMAIL"
       fi
     done
