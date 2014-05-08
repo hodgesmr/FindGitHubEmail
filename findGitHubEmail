@@ -80,4 +80,8 @@ fi
 
 if [ -n "$EMAIL" ] ; then
   echo "$EMAIL"
+  exit
 fi
+
+exit 1
+
